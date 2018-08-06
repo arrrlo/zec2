@@ -2,7 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/zec2.svg)](https://badge.fury.io/py/zec2)
 
-<p>Easily ssh to your AWS EC2 instances</p>
+<p>Easily manage your AWS EC2 instances.</p>
 
 <h2>INSTALL</h2>
 

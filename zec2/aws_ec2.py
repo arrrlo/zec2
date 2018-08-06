@@ -86,6 +86,18 @@ class AwsEc2Instance(object):
     def zone(self):
         return str(self._instance.placement['AvailabilityZone'])
 
+    def public_ip_address(self):
+        if self._instance.public_ip_address:
+            return self._instance.public_ip_address
+        else:
+            return ''
+
+    def ssh_ip_address(self):
+        if self._instance.public_ip_address:
+            return self._instance.public_ip_address
+        else:
+            return self._instance.private_ip_address
+
     @property
     def aws(self):
         return self._instance
@@ -95,7 +107,7 @@ class AwsEc2Instance(object):
             user = 'ec2-user'
         if not key_path:
             key_path = '~/.ssh/%s.pem' % self._instance.key_name
-        params = (key_path, user, self._instance.public_ip_address)
+        params = (key_path, user, self.ssh_ip_address())
         return 'ssh -i %s %s@%s' % params
 
     def stop(self):

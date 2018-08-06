@@ -43,7 +43,7 @@ def instance_table_maker(instances, table_data=None, i=None):
         row.append(click.style(instance.name(), fg='yellow'))
         row.append(instance.aws.id)
         row.append(instance.aws.private_ip_address)
-        row.append(instance.aws.public_ip_address)
+        row.append(instance.public_ip_address())
         state, state_fg = instance.state()
         row.append(click.style(state, fg=state_fg))
         row.append(instance.aws.key_name)
