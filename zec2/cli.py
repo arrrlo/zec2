@@ -1,65 +1,70 @@
+import time
 import click
-from terminaltables import AsciiTable
 
-from zec2.aws_ec2 import AwsEc2, AwsVpc
+from zec2 import get_aws_objects, get_instance_by_number, \
+                 run_action, list_instances
 
 
 @click.group()
-def cli():
-    pass
+@click.pass_context
+@click.option('-p', '--aws_profile', help='AWS API profile')
+def cli(context, aws_profile):
+    ec2, vpcs = get_aws_objects(aws_profile)
+    context.obj = {
+        'aws_profile': aws_profile,
+        'objects': {
+            'ec2': ec2,
+            'vpcs': vpcs
+        }
+    }
 
 
 @cli.command()
-def ls():
-    ec2 = AwsEc2()
-    vpcs = AwsVpc()
-
-    i = 0
-
-    for vpc in vpcs.list():
-        instances = ec2.list(_filter=[('vpc-id', vpc.id)])
-
-        table_data = [
-            ['', 'Name', 'Private IP', 'Public IP', 'State', 'Key Pair', 'Type', 'Launch time'],
-        ]
-
-        click.echo()
-        click.secho(vpc.id, fg='red')
-
-        for instance in instances:
-            row = list()
-
-            row.append(str(i+1))
-            row.append(click.style(instance.name(), fg='blue'))
-            row.append(instance.aws.private_ip_address)
-            row.append(instance.aws.public_ip_address)
-            state, state_fg = instance.state()
-            row.append(click.style(state, fg=state_fg))
-            row.append(instance.aws.key_name)
-            row.append(instance.aws.instance_type)
-            row.append(instance.aws.launch_time)
-
-            table_data.append(row)
-
-            i += 1
-
-        table = AsciiTable(table_data)
-
-        click.echo(table.table)
-        click.echo()
+@click.pass_context
+@click.option('-f/-no-f', default=False, help='Run ls forever')
+def ls(context, f):
+    if f:
+        while True:
+            click.clear()
+            list_instances(**context.obj.get('objects'))
+            time.sleep(2)
+    else:
+        list_instances(**context.obj.get('objects'))
 
 
 @cli.command()
+@click.pass_context
 @click.argument('number')
 @click.option('-u', '--user', help='SSH user')
-@click.option('-i', '--key_path', help='SSH user')
-def ssh(number, user, key_path):
-    ec2 = AwsEc2()
-    vpcs = AwsVpc()
-
-    instances = list()
-    for vpc in vpcs.list():
-        instances += ec2.list(_filter=[('vpc-id', vpc.id)])
-
-    instance = instances[int(number)-1]
+@click.option('-i', '--key_path', help='AWS Key Pair')
+def ssh(context, number, user, key_path):
+    instance = get_instance_by_number(number, **context.obj.get('objects'))
     click.echo(instance.ssh_command(user, key_path))
+
+
+@cli.command()
+@click.pass_context
+@click.argument('number')
+def start(context, number):
+    run_action(number, 'start', **context.obj.get('objects'))
+
+
+@cli.command()
+@click.pass_context
+@click.argument('number')
+def stop(context, number):
+    run_action(number, 'stop', **context.obj.get('objects'))
+
+
+@cli.command()
+@click.pass_context
+@click.argument('number')
+def restart(context, number):
+    run_action(number, 'restart', **context.obj.get('objects'))
+
+
+@cli.command()
+@click.pass_context
+@click.argument('number')
+def terminate(context, number):
+    run_action(number, 'terminate', **context.obj.get('objects'))
