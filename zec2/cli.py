@@ -10,6 +10,7 @@ from zec2 import get_aws_objects, get_instance_by_number, \
 @click.option('-p', '--aws_profile', help='AWS API profile')
 def cli(context, aws_profile):
     ec2, vpcs = get_aws_objects(aws_profile)
+    ec2.connection()
     context.obj = {
         'aws_profile': aws_profile,
         'objects': {

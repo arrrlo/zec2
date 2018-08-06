@@ -5,14 +5,15 @@ from botocore import exceptions
 
 class AwsClient(object):
 
+    conn = None
+
     def __init__(self):
         self._aws_profile = 'default'
 
     def aws_profile(self, _aws_profile):
         self._aws_profile = _aws_profile
 
-    @property
-    def client(self):
+    def connection(self):
         try:
             s = boto3.Session(profile_name=self._aws_profile)
             return s.resource('ec2')
@@ -24,6 +25,14 @@ class AwsClient(object):
             raise UsageError(str(e))
         except exceptions.UnknownCredentialError as e:
             raise UsageError(str(e))
+        except exceptions.NoRegionError as e:
+            raise UsageError(str(e))
+
+    @property
+    def client(self):
+        if self.conn is None:
+            self.conn = self.connection()
+        return self.conn
 
 
 class AwsEc2(AwsClient):
@@ -33,22 +42,26 @@ class AwsEc2(AwsClient):
         if _filter is None:
             _filter = []
 
-        instances = self.client.instances.filter(Filters=[
-            {
-                'Name': name,
-                'Values': value if type(value) == list else [value]
-            }
-            for name, value in _filter
-        ])
+        try:
+            instances = self.client.instances.filter(Filters=[
+                {
+                    'Name': name,
+                    'Values': value if type(value) == list else [value]
+                }
+                for name, value in _filter
+            ])
 
-        def by_name(instance):
-            for tag in instance.tags or []:
-                if tag['Key'] == 'Name':
-                    return tag['Value']
-            else:
-                return ''
+            def by_name(instance):
+                for tag in instance.tags or []:
+                    if tag['Key'] == 'Name':
+                        return tag['Value']
+                else:
+                    return ''
 
-        instances = sorted(instances, key=by_name)
+            instances = sorted(instances, key=by_name)
+        except exceptions.ClientError as e:
+            raise UsageError(str(e))
+
         return [AwsEc2Instance(instance) for instance in instances]
 
 
