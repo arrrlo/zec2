@@ -1,7 +1,7 @@
 import unittest
 
 
-class TestGoogleApi(unittest.TestCase):
+class TestZec2(unittest.TestCase):
 
     def setUp(self):
         pass
