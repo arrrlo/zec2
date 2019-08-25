@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='zec2',
-    version="0.2.2",
+    version="0.3.0",
 
     description='Easily ssh to your AWS EC2 instances',
     long_description=readme(),
@@ -26,7 +26,10 @@ setup(
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     keywords='amazon, aws, ec2, ssh, instance',
 

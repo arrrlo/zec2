@@ -1,16 +1,62 @@
-<h1>zec2</h1>
+# zec2
 
 [![PyPI version](https://badge.fury.io/py/zec2.svg)](https://badge.fury.io/py/zec2)
+[![Build Status](https://travis-ci.com/arrrlo/zec2.svg?branch=master)](https://travis-ci.com/arrrlo/zec2)
 
-<p>Easily manage your AWS EC2 instances.</p>
+![GitHub issues](https://img.shields.io/github/issues/arrrlo/zec2.svg)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/arrrlo/zec2.svg)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/arrrlo/zec2.svg)
 
-<h2>INSTALL</h2>
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/zec2.svg)
+![GitHub](https://img.shields.io/github/license/arrrlo/zec2.svg?color=blue)
+![GitHub last commit](https://img.shields.io/github/last-commit/arrrlo/zec2.svg?color=blue)
+
+Easily manage your AWS EC2 instances
+
+## INSTALL
 
 ```bash
 pip install zec2
 ```
 
-<h2>USAGE</h2>
+## CONFIGURE AWS CREDENTIALS
+
+You should have this two files on your computer:
+
+`~/.aws/config`:
+
+```ini
+[default]
+region=your_aws_region
+output=json
+```
+
+`~/.aws/credentials`:
+
+```ini
+[default]
+aws_access_key_id=your_access_key_id
+aws_secret_access_key=your_secret_access_key
+```
+
+To learn more about AWS credentials and how to install them on your computer, please read this:
+[https://docs.aws.amazon.com/rekognition/latest/dg/setting-up.html](https://docs.aws.amazon.com/rekognition/latest/dg/setting-up.html)
+
+## DIFFERENT AWS PROFILES
+
+You can put as many profiles in your aws credentials file and call them with zec2:
+
+```bash
+# use default aws profile
+> zec2 ls
+
+# use different aws profile
+> zec2 -p my_profile ls
+```
+
+Use this option with every command.
+
+## CLI COMMANDS
 
 ```bash
 # list all EC2 instances
