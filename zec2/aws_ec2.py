@@ -7,8 +7,8 @@ class AwsClient(object):
 
     conn = None
 
-    def __init__(self, aws_profile='default'):
-        self._aws_profile = aws_profile
+    def __init__(self):
+        self._aws_profile = 'default'
 
     def aws_profile(self, _aws_profile):
         self._aws_profile = _aws_profile
