@@ -2,16 +2,16 @@ dist: xenial
 
 language: python
 
-#python:
-#  - 2.7
-#  - 3.5
-#  - 3.6
-#  - 3.7
-#  - 3.8-dev
+python:
+  - 2.7
+  - 3.5
+  - 3.6
+  - 3.7
+  - 3.8-dev
 
-#script:
-#  - pip install .
-#  - pytest -vvv
+script:
+  - pip install .
+  - pytest -vvv
 
 deploy:
   skip_cleanup: true
