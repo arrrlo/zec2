@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='zec2',
-    version="0.3.0",
+    version="0.3.1",
 
     description='Easily ssh to your AWS EC2 instances',
     long_description=readme(),
@@ -35,8 +35,8 @@ setup(
 
     packages=['zec2'],
     install_requires=[
-        'click~=6.3',
-        'six~=1.11.0',
+        'click>=7.0',
+        'six>=1.14.0',
         'boto3~=1.7.69',
         'terminaltables~=3.1.0'
     ],
