@@ -3,14 +3,15 @@ dist: xenial
 language: python
 
 python:
-  - 2.7
-  - 3.5
   - 3.6
   - 3.7
-  - 3.8-dev
+  - 3.8
+  - 3.9
 
 script:
-  - pip install .
+  - pip3 install .
+  - pip3 install pytest
+  - pip list
   - pytest -vvv
 
 deploy:
