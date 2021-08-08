@@ -15,22 +15,22 @@ class AwsClient(object):
         self._aws_profile = _aws_profile
 
     def connection(self):
-        if self._session:
-            return self._session
-        else:
-            try:
+        try:
+            if self._session:
+                return self._session
+            else:
                 s = boto3.Session(profile_name=self._aws_profile)
-                return s.resource('ec2')
-            except exceptions.ProfileNotFound as e:
-                raise UsageError(str(e))
-            except exceptions.ConfigParseError as e:
-                raise UsageError(str(e))
-            except exceptions.ConfigNotFound as e:
-                raise UsageError(str(e))
-            except exceptions.UnknownCredentialError as e:
-                raise UsageError(str(e))
-            except exceptions.NoRegionError as e:
-                raise UsageError(str(e))
+            return s.resource('ec2')
+        except exceptions.ProfileNotFound as e:
+            raise UsageError(str(e))
+        except exceptions.ConfigParseError as e:
+            raise UsageError(str(e))
+        except exceptions.ConfigNotFound as e:
+            raise UsageError(str(e))
+        except exceptions.UnknownCredentialError as e:
+            raise UsageError(str(e))
+        except exceptions.NoRegionError as e:
+            raise UsageError(str(e))
 
     @property
     def client(self):
