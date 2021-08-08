@@ -16,11 +16,11 @@ class AwsClient(object):
 
     def connection(self):
         try:
-            if self._session:
-                return self._session
-            else:
-                s = boto3.Session(profile_name=self._aws_profile)
-            return s.resource('ec2')
+            if not self._session:
+                self._session = boto3.Session(profile_name=self._aws_profile)
+            
+            return self._session.resource('ec2')
+
         except exceptions.ProfileNotFound as e:
             raise UsageError(str(e))
         except exceptions.ConfigParseError as e:
