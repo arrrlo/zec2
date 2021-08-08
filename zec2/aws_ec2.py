@@ -7,26 +7,30 @@ class AwsClient(object):
 
     conn = None
 
-    def __init__(self):
+    def __init__(self, session=None):
+        self._session = session
         self._aws_profile = 'default'
 
     def aws_profile(self, _aws_profile):
         self._aws_profile = _aws_profile
 
     def connection(self):
-        try:
-            s = boto3.Session(profile_name=self._aws_profile)
-            return s.resource('ec2')
-        except exceptions.ProfileNotFound as e:
-            raise UsageError(str(e))
-        except exceptions.ConfigParseError as e:
-            raise UsageError(str(e))
-        except exceptions.ConfigNotFound as e:
-            raise UsageError(str(e))
-        except exceptions.UnknownCredentialError as e:
-            raise UsageError(str(e))
-        except exceptions.NoRegionError as e:
-            raise UsageError(str(e))
+        if self._session:
+            return self._session
+        else:
+            try:
+                s = boto3.Session(profile_name=self._aws_profile)
+                return s.resource('ec2')
+            except exceptions.ProfileNotFound as e:
+                raise UsageError(str(e))
+            except exceptions.ConfigParseError as e:
+                raise UsageError(str(e))
+            except exceptions.ConfigNotFound as e:
+                raise UsageError(str(e))
+            except exceptions.UnknownCredentialError as e:
+                raise UsageError(str(e))
+            except exceptions.NoRegionError as e:
+                raise UsageError(str(e))
 
     @property
     def client(self):
