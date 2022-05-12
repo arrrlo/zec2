@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='zec2',
-    version="0.4.2",
+    version="0.4.3",
 
     description='Easily ssh to your AWS EC2 instances',
     long_description=readme(),
