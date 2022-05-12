@@ -58,13 +58,13 @@ def instance_table_maker(instances, table_data=None, i=None):
     return table_data, i
 
 
-def get_aws_objects(aws_profile):
+def get_aws_objects(aws_profile, aws_region):
     ec2 = AwsEc2()
     vpcs = AwsVpc()
 
     if aws_profile:
-        ec2.aws_profile(aws_profile)
-        vpcs.aws_profile(aws_profile)
+        ec2.aws_profile(aws_profile, aws_region)
+        vpcs.aws_profile(aws_profile, aws_region)
 
     return ec2, vpcs
 

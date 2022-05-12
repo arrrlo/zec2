@@ -10,14 +10,22 @@ class AwsClient(object):
     def __init__(self, session=None):
         self._session = session
         self._aws_profile = 'default'
+        self._aws_region = None
 
-    def aws_profile(self, _aws_profile):
+    def aws_profile(self, _aws_profile, _aws_region):
         self._aws_profile = _aws_profile
+        self._aws_region = _aws_region
 
     def connection(self):
         try:
             if not self._session:
-                self._session = boto3.Session(profile_name=self._aws_profile)
+                if self._aws_profile == 'default':
+                    self._session = boto3.Session(
+                        profile_name=self._aws_profile)
+                else:
+                    self._session = boto3.Session(
+                        profile_name=self._aws_profile,
+                        region_name=self._aws_region)
             
             return self._session.resource('ec2')
 

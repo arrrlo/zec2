@@ -8,11 +8,13 @@ from zec2 import get_aws_objects, get_instance_by_number, \
 @click.group()
 @click.pass_context
 @click.option('-p', '--aws_profile', help='AWS API profile')
-def cli(context, aws_profile):
-    ec2, vpcs = get_aws_objects(aws_profile)
+@click.option('-r', '--aws_region', help='AWS API region')
+def cli(context, aws_profile, aws_region):
+    ec2, vpcs = get_aws_objects(aws_profile, aws_region)
     ec2.connection()
     context.obj = {
         'aws_profile': aws_profile,
+        'aws_region': aws_region,
         'objects': {
             'ec2': ec2,
             'vpcs': vpcs
