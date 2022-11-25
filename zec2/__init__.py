@@ -58,13 +58,16 @@ def instance_table_maker(instances, table_data=None, i=None):
     return table_data, i
 
 
-def get_aws_objects(aws_profile, aws_region):
+def get_aws_objects(aws_profile, aws_region, proxy):
     ec2 = AwsEc2()
     vpcs = AwsVpc()
 
     if aws_profile:
         ec2.aws_profile(aws_profile, aws_region)
         vpcs.aws_profile(aws_profile, aws_region)
+
+    if proxy:
+        ec2.proxy = proxy
 
     return ec2, vpcs
 
@@ -91,16 +94,19 @@ def run_action(number, method, ec2, vpcs):
     click.echo(table.table)
     click.echo()
 
-    instance_id = click.prompt('For safety reason, please enter instance ID: ', type=str)
+    instance_id = click.prompt(
+        'For safety reason, please enter instance ID: ', type=str)
 
     if instance.aws.id == instance_id:
-        if click.confirm('Do you really want to %s that poor instance?' % method):
+        if click.confirm(
+                'Do you really want to %s that poor instance?' % method):
             try:
                 getattr(instance, method)()
-            except exceptions.ClientError:
+            except exceptions.ClientError as e:
                 if method == 'terminate':
-                    if click.confirm(click.style('Termination protection is enabled. \
-Do you want to disable it?', fg='red')):
+                    if click.confirm(click.style(
+                            'Termination protection is enabled. '
+                            'Do you want to disable it?', fg='red')):
                         instance.disable_api_termination()
                         run_action(number, method, ec2, vpcs)
                 else:
