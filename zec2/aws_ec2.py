@@ -10,22 +10,27 @@ class AwsClient(object):
     def __init__(self, session=None):
         self._session = session
         self._aws_profile = 'default'
-        self._aws_region = None
+        self._aws_region = 'us-east-1'
+        self._proxy = None
 
     def aws_profile(self, _aws_profile, _aws_region):
         self._aws_profile = _aws_profile
         self._aws_region = _aws_region
 
+    @property
+    def proxy(self):
+        return self._proxy
+
+    @proxy.setter
+    def proxy(self, proxy):
+        self._proxy = proxy
+
     def connection(self):
         try:
             if not self._session:
-                if self._aws_profile == 'default':
-                    self._session = boto3.Session(
-                        profile_name=self._aws_profile)
-                else:
-                    self._session = boto3.Session(
-                        profile_name=self._aws_profile,
-                        region_name=self._aws_region)
+                self._session = boto3.Session(
+                    profile_name=self._aws_profile,
+                    region_name=self._aws_region)
             
             return self._session.resource('ec2')
 
@@ -117,8 +122,8 @@ class AwsEc2Instance(object):
         else:
             return ''
 
-    def ssh_ip_address(self):
-        if self._instance.public_ip_address:
+    def ssh_ip_address(self, private=False):
+        if self._instance.public_ip_address and private is False:
             return self._instance.public_ip_address
         else:
             return self._instance.private_ip_address
@@ -127,13 +132,20 @@ class AwsEc2Instance(object):
     def aws(self):
         return self._instance
 
-    def ssh_command(self, user, key_path):
+    def ssh_command(self, user, key_path, ec2):
         if not user:
             user = 'ec2-user'
         if not key_path:
             key_path = '~/.ssh/%s.pem' % self._instance.key_name
-        params = (key_path, user, self.ssh_ip_address())
-        return 'ssh -i %s %s@%s' % params
+
+        proxy = ''
+        private = False
+        if ec2.proxy:
+            private = True
+            proxy = '-J %s ' % (ec2.proxy,)
+
+        params = (proxy, key_path, user, self.ssh_ip_address(private))
+        return 'ssh %s-i %s %s@%s' % params
 
     def stop(self):
         self._instance.stop()
